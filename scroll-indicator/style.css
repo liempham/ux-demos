@@ -1,0 +1,70 @@
+/* style.css - Same as before, but with an addition */
+
+.scroll-indicator {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000;
+    animation: subtle-blink 2s infinite;
+    opacity: 0.3;
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Add visibility transition */
+    font-size: 12px;
+    background-color: #f0e68c;
+    padding: 3px 6px;
+    border-radius: 4px;
+    visibility: visible; /* Initially visible */
+  }
+  
+  .scroll-indicator:hover {
+    opacity: 0.8;
+  }
+  
+  .scroll-indicator p {
+      color: #333;
+      margin: 0;
+  }
+  
+  .arrow {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 8px solid #333;
+  }
+  
+  @keyframes subtle-blink {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.1; }
+    100% { opacity: 0.3; }
+  }
+  
+  /* Make the content area scrollable (for demonstration) */
+  .content {
+    height: 200vh; /* Start with scrollable content */
+    padding: 20px;
+  }
+  
+  /* Media Query for smaller screens */
+  @media (max-width: 768px) {
+    .scroll-indicator {
+      bottom: 5px;
+      right: 5px;
+      font-size: 10px;
+      padding: 2px 4px;
+    }
+      .arrow{
+          border-left: 4px solid transparent;
+          border-right: 4px solid transparent;
+          border-top: 6px solid #333;
+      }
+  }
+  
+  /*  Class to hide the indicator */
+  .scroll-indicator.hidden {
+    opacity: 0;
+    visibility: hidden; /*  Hide completely */
+    pointer-events: none; /* Prevent clicks when hidden */
+  }
