@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formatted Phone Fields</title>
+    <style>
+        /* --- Basic Page Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 900px;
+            /* Increased max-width for the heading */
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Flex container for the entire row including the heading --- */
+        .form-row {
+            display: flex;
+            gap: 15px;
+            /* Creates space between the flex items */
+            align-items: center;
+            /* Vertically aligns the heading and inputs */
+        }
+
+        /* --- NEW: Styling for the H3 within the flex row --- */
+        .form-row h3 {
+            margin: 0;
+            /* Reset default h3 margins */
+            padding-right: 20px;
+            /* Add space between heading and first input */
+            font-size: 18px;
+            color: #333;
+            white-space: nowrap;
+            /* Prevents the heading from wrapping */
+            flex-shrink: 0;
+            /* Prevents the heading from shrinking */
+        }
+
+        /* --- The Core Styling for the Input Fields --- */
+
+        /* 1. The wrapper for each input group */
+        .phone-field-group {
+            position: relative;
+            /* Crucial for positioning the minimized label */
+            flex: 1;
+            /* Each field will take up an equal amount of the remaining space */
+            min-width: 0;
+            /* Prevents flex items from overflowing */
+        }
+
+        /* 2. The minimized label (H, M, W) */
+        .minimized-label {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555;
+            font-weight: 600;
+            font-size: 16px;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        /* 3. The main input field */
+        .phone-input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .phone-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+        }
+
+        /* 4. The state when the user has typed something */
+        .phone-field-group.is-filled .minimized-label {
+            opacity: 1;
+        }
+
+        .phone-field-group.is-filled .phone-input {
+            padding-left: 35px;
+        }
+
+        /* 5. The Tooltip on Hover */
+        .phone-field-group[data-tooltip]::after,
+        .phone-field-group[data-tooltip]::before {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .phone-field-group[data-tooltip]::after {
+            content: attr(data-tooltip);
+            background-color: #333;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            bottom: 110%;
+        }
+
+        .phone-field-group[data-tooltip]::before {
+            content: '';
+            border: 5px solid transparent;
+            border-top-color: #333;
+            bottom: calc(110% - 5px);
+        }
+
+        .phone-field-group[data-tooltip]:hover::after,
+        .phone-field-group[data-tooltip]:hover::before {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-container">
+        <div class="form-row">
+            <h3>Phone number</h3>
+
+            <div class="phone-field-group" data-tooltip="Home phone">
+                <span class="minimized-label">H</span>
+                <input type="tel" class="phone-input" id="homePhone" placeholder="Home phone" maxlength="14">
+            </div>
+
+            <div class="phone-field-group" data-tooltip="Mobile phone">
+                <span class="minimized-label">M</span>
+                <input type="tel" class="phone-input" id="mobilePhone" placeholder="Mobile phone" maxlength="14">
+            </div>
+
+            <div class="phone-field-group" data-tooltip="Work phone">
+                <span class="minimized-label">W</span>
+                <input type="tel" class="phone-input" id="workPhone" placeholder="Work phone" maxlength="14">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const phoneInputs = document.querySelectorAll('.phone-input');
+
+            const formatPhoneNumber = (value) => {
+                const numbers = value.replace(/\D/g, '');
+                const rawNumbers = numbers.slice(0, 10);
+                const { length } = rawNumbers;
+
+                if (length === 0) return '';
+                if (length < 4) return `(${rawNumbers}`;
+                if (length < 7) return `(${rawNumbers.slice(0, 3)}) ${rawNumbers.slice(3)}`;
+                return `(${rawNumbers.slice(0, 3)}) ${rawNumbers.slice(3, 6)}-${rawNumbers.slice(6, 10)}`;
+            };
+
+            const handleInput = (e) => {
+                const input = e.target;
+                const parentGroup = input.parentElement;
+
+                const formattedValue = formatPhoneNumber(input.value);
+                input.value = formattedValue;
+
+                if (input.value.trim() !== '') {
+                    parentGroup.classList.add('is-filled');
+                } else {
+                    parentGroup.classList.remove('is-filled');
+                }
+            };
+
+            phoneInputs.forEach(input => {
+                input.addEventListener('input', handleInput);
+            });
+        });
+    </script>
+
+</body>
+
+</html>
